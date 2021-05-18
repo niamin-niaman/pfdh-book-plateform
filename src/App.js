@@ -1,5 +1,6 @@
 import "./App.css";
 import Post from "./components/Post";
+import FormPost from "./components/FormPost";
 
 import styled from "styled-components";
 
@@ -54,7 +55,8 @@ function App() {
 
             <Grid.Column width={13}>
               <ContentWrapper>
-                <Post />
+                {/* <Post /> */}
+                <FormPost />
               </ContentWrapper>
             </Grid.Column>
           </Grid.Row>
