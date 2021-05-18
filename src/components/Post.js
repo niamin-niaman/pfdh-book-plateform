@@ -14,14 +14,6 @@ const Avatar = styled(Image)`
   padding: 1em;
 `;
 
-const AvatarInformation = styled.div`
-  padding: 1em;
-`;
-
-const PostContent = styled.div`
-  border: 1px solid black;
-`;
-
 const Post = () => {
   return (
     <>
@@ -55,7 +47,7 @@ const Post = () => {
          
           </Grid.Row>
         </Grid>
-        <Comment.Group >
+        <Comment.Group>
           <Header as='h3' dividing>
             Comments
           </Header>
