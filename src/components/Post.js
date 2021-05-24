@@ -2,16 +2,25 @@ import React from "react";
 
 import styled from "styled-components";
 
-import { Grid, Image, Comment, Form, Header, Button } from "semantic-ui-react";
+import {
+  Grid,
+  Image,
+  Comment,
+  Form,
+  Header,
+  Button,
+  Segment,
+} from "semantic-ui-react";
 
-const Wrapper = styled.section`
+const Wrapper = styled(Segment)`
   border: 1px solid black;
+  margin: 1em 0em;
   padding: 1em;
 `;
 
-const Avatar = styled(Image)`
-  text-alignment: center;
-  padding: 1em;
+const MetaData = styled.div`
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 0.875em;
 `;
 
 const Post = () => {
@@ -20,23 +29,29 @@ const Post = () => {
       <Wrapper>
         <Grid container>
           <Grid.Row>
-            <Grid.Column width={2} centered>
-              <Avatar src='/logo512.png' size='small' />
-            </Grid.Column>
-            <Grid.Column width={5} centered>
-                <Grid.Row>
-                  <span>Username</span>
-                </Grid.Row>
-                <Grid.Row>
-                  <span>DD / MM / YYYY</span>
-                </Grid.Row>
-            </Grid.Column>
+            <Grid style={{ padding: "0em 1em" }}>
+              <Grid.Column width={4}>
+                <Image
+                  src='https://react.semantic-ui.com/images/avatar/small/matt.jpg'
+                  size='small'
+                  avatar
+                />
+              </Grid.Column>
+              <Grid.Column width={12}>
+                <h3>UserItem</h3>
+                <MetaData> Yesterday at 12:30AM </MetaData>
+              </Grid.Column>
+            </Grid>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column width={10}>
-              <Image src='https://react.semantic-ui.com/images/wireframe/image.png' />
-            </Grid.Column>
             <Grid.Column width={6}>
+              <Image
+                src='https://react.semantic-ui.com/images/wireframe/image.png'
+                size='medium'
+              />
+            </Grid.Column>
+            <Grid.Column width={10}>
+              <h3> ชื่อหนังสือ</h3>
               Lorem ipsum dolor sit, amet consectetur adipisicing elit. Adipisci
               nulla explicabo sequi odio, tempore enim vel deleniti ratione a
               fugiat iure doloremque velit repudiandae eum omnis. Dolor error
@@ -44,7 +59,6 @@ const Post = () => {
               accusantium vel, facilis dolores ad, cumque quia dignissimos quis
               possimus repellendus! Exercitationem, doloribus ut.
             </Grid.Column>
-         
           </Grid.Row>
         </Grid>
         <Comment.Group>

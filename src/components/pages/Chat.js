@@ -2,7 +2,7 @@ import React from "react";
 
 import styled from "styled-components";
 
-import { Grid, Image, Comment, Form, Header, Button } from "semantic-ui-react";
+import { Comment, Form, Button } from "semantic-ui-react";
 
 const Wrapper = styled.section`
   border: 1px solid black;
