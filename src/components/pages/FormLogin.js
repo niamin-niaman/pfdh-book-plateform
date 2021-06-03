@@ -71,7 +71,7 @@ const FormLogin = () => {
   return (
     <Grid textAlign='center' style={{ height: "100vh" }} verticalAlign='middle'>
       <Grid.Column style={{ maxWidth: 450 }}>
-        <Header as='h2' color='teal' textAlign='center'>
+        <Header as='h2' textAlign='center'>
           Log-in to your account
         </Header>
         <Form size='large' onSubmit={handleFromSubmit}>
@@ -99,7 +99,7 @@ const FormLogin = () => {
               onChange={(e) => handleInputChange(e)}
             />
 
-            <Button loading={isLoading} color='teal' fluid size='large'>
+            <Button loading={isLoading} fluid size='large'>
               Login
             </Button>
           </Segment>

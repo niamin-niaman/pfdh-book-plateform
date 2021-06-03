@@ -1,4 +1,50 @@
 
+body {
+    background: #C3A6A1;
+}
+
+.ui.segment {
+    background: #f7f1f0;
+    filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.25));
+}
+
+/* button primay */
+.ui.primary.button, .ui.primary.buttons .button {
+    background-color: #a15c38;
+}
+
+.ui.primary.button:hover, .ui.primary.buttons .button:hover {
+    background-color: rgb(126, 96, 79);
+}
+
+.ui.primary.button:active, .ui.primary.buttons .button:active {
+    background-color: rgb(126, 96, 79);
+}
+.ui.primary.button:focus, .ui.primary.buttons .button:focus {
+    background-color: rgb(126, 96, 79);
+}
+
+/* button general */
+
+.ui.button, .ui.buttons .button {
+    background-color: #a15c38;
+    color: #fff;
+}
+
+.ui.button:hover, .ui.buttons .button:hover {
+    background-color: rgb(126, 96, 79);
+    color: #fff;
+}
+
+.ui.button:active, .ui.buttons .button:active {
+    background-color: rgb(126, 96, 79);
+    color: #fff;
+}
+.ui.button:focus, .ui.buttons .button:focus {
+    background-color: rgb(126, 96, 79);
+    color: #fff;
+}
+
 .ui.comments {
     max-width: 100%;
     padding: 0em 1em;

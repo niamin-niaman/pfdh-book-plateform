@@ -2,10 +2,9 @@ import React from "react";
 
 import styled from "styled-components";
 
-import { Comment, Form, Button } from "semantic-ui-react";
+import { Comment, Form, Button, Segment } from "semantic-ui-react";
 
-const Wrapper = styled.section`
-  border: 1px solid black;
+const Wrapper = styled(Segment)`
   padding: 1em;
 `;
 
