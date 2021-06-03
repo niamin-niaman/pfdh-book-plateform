@@ -1,18 +1,65 @@
+import { useEffect } from "react";
+
+import { useDispatch, useSelector } from "react-redux";
+
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
+import firebase from "./firebase";
+import { pocFb, setUser, resetUser } from "./redux/userSlice";
+
 import "./App.css";
-import FormLogin from "./components/FormLogin";
-import { Chat, Profile, FormPost, Board, Admin } from "./components/pages";
+
+import {
+  Chat,
+  Profile,
+  FormPost,
+  Board,
+  Admin,
+  FormLogin,
+  FormRegister,
+} from "./components/pages";
 
 import styled from "styled-components";
 
 import { Grid, Button, Search } from "semantic-ui-react";
 function App() {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        // User is signed in.
+        dispatch(
+          setUser({
+            ...user.toJSON(),
+            // accessToken,
+          })
+        );
+      } else {
+        // No user is signed in.
+      }
+    });
+  }, []);
+
+  const handleLogoutClick = () => {
+    console.log("logout");
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        // Sign-out successful.
+        dispatch(resetUser());
+        console.log(user);
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
+
   const Wrapper = styled.section`
     padding: 0em 4em;
   `;
-
-
 
   const Menu = styled.div`
     display: flex;
@@ -38,6 +85,9 @@ function App() {
             <Route path={"/login"}>
               <FormLogin />
             </Route>
+            <Route path={"/register"}>
+              <FormRegister />
+            </Route>
             <>
               <Grid columns={2} divided>
                 <Grid.Row>
@@ -57,39 +107,45 @@ function App() {
                       // value={value}
                       />
                       <MenuItem>
-                        <Button fluid as={Link} to='/profile'>
+                        <Button primary fluid as={Link} to='/profile'>
                           Profile
                         </Button>
                       </MenuItem>
                       <MenuItem>
-                        <Button fluid as={Link} to='/board'>
+                        <Button primary fluid as={Link} to='/board'>
                           Board
                         </Button>
                       </MenuItem>
                       <MenuItem>
-                        <Button fluid as={Link} to='/my-board'>
+                        <Button primary fluid as={Link} to='/my-board'>
                           My book
                         </Button>
                       </MenuItem>
                       <MenuItem>
-                        <Button fluid as={Link} to='/form-post'>
+                        <Button primary fluid as={Link} to='/form-post'>
                           Post my book
                         </Button>
                       </MenuItem>
                       <MenuItem>
-                        <Button fluid as={Link} to='/chat'>
+                        <Button primary fluid as={Link} to='/chat'>
                           Chat
                         </Button>
                       </MenuItem>
                       <MenuItem>
-                        <Button fluid as={Link} to='/admin'>
+                        <Button color='blue' fluid as={Link} to='/admin'>
                           Admin
                         </Button>
                       </MenuItem>
                       <MenuItem>
-                        <Button fluid as={Link} to='/login'>
-                          Login
-                        </Button>
+                        {Object.keys(user).length ? (
+                          <Button color='red' fluid onClick={handleLogoutClick}>
+                            Logout
+                          </Button>
+                        ) : (
+                          <Button color='green' fluid as={Link} to='/login'>
+                            Login
+                          </Button>
+                        )}
                       </MenuItem>
                     </Menu>
                   </Grid.Column>
