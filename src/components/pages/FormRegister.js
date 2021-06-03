@@ -1,9 +1,10 @@
 import React, { useReducer, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { pocFb, setUser } from "../../redux/userSlice";
 
 import { BrowserRouter as Router, useHistory, Link } from "react-router-dom";
+
+import firebase from "../../firebase";
 
 import {
   Button,
@@ -14,10 +15,16 @@ import {
   Segment,
 } from "semantic-ui-react";
 
-import firebase from "../../firebase";
-
 const FormLogin = () => {
-  // local Reducer
+  // ANCHOR ETC
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  let history = useHistory();
+  const [isLoading, setIsLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+
+  // SECTION FORM HANDLER
+
   const [formInput, setFormInput] = useReducer(
     (state, newState) => ({
       ...state,
@@ -26,23 +33,33 @@ const FormLogin = () => {
     {}
   );
 
-  // Hook
-  let history = useHistory();
-  const user = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-
-  // local state
-  const [isLoading, setIsLoading] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
-
   const handleInputChange = ({ target: { name, value } }) => {
     setFormInput({ [name]: value });
   };
 
   const handleFromSubmit = (e) => {
-    console.log(formInput);
     setIsLoading(true);
-    const { email, password, confirmPassword } = formInput;
+
+    function isEmpty(obj) {
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key)) return false;
+      }
+      return true;
+    }
+    // console.log(formInput);
+    if (isEmpty(formInput)) {
+      setErrMsg("form is empty");
+      setIsLoading(false);
+      return;
+    }
+
+    const { name, email, password, confirmPassword } = formInput;
+    console.log(name);
+    if (!name) {
+      setErrMsg("Name is empty");
+      setIsLoading(false);
+      return;
+    }
     if (password !== confirmPassword) {
       setErrMsg("Password not match");
       setIsLoading(false);
@@ -52,16 +69,23 @@ const FormLogin = () => {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
-        // Signed in
+        
         var user = userCredential.user;
-        console.log(user.toJSON());
-        dispatch(
-          setUser({
-            ...user.toJSON(),
-          })
-        );
 
-        // ...
+        // NOTE Create user DOC into firestore
+        // console.log(user.toJSON());
+        const db = firebase.firestore();
+        db.collection("users")
+          .doc(user.toJSON().uid)
+          .set({ ...user.toJSON(), displayName: name });
+
+        // Update display name
+        user.updateProfile({
+          displayName: name,
+        });
+
+        // NOTE in useEffect on APP component always check is login ?
+
       })
       .catch((error) => {
         console.log(error);
@@ -72,9 +96,11 @@ const FormLogin = () => {
         // ..
       });
   };
+  // !SECTION
 
+  // check if user already login
   if (Object.keys(user).length) {
-    console.log(user);
+    // console.log(user);
     history.push("/");
   }
 

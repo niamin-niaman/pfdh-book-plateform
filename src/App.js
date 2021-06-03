@@ -31,10 +31,7 @@ function App() {
       if (user) {
         // User is signed in.
         dispatch(
-          setUser({
-            ...user.toJSON(),
-            // accessToken,
-          })
+          setUser()
         );
       } else {
         // No user is signed in.
@@ -77,6 +74,12 @@ function App() {
     margin: 2em;
   `;
 
+  const SearchWrapper = styled(Search)`
+    .ui.icon.input > input {
+      width: 100%;
+    }
+  `;
+
   return (
     <>
       <Router>
@@ -94,18 +97,10 @@ function App() {
                   <Grid.Column width={3}>
                     <Menu>
                       <h1>Menu</h1>
-                      <Search
-                      // loading={loading}
-                      // onResultSelect={(e, data) =>
-                      //   dispatch({
-                      //     type: "UPDATE_SELECTION",
-                      //     selection: data.result.title,
-                      //   })
-                      // }
-                      // onSearchChange={handleSearchChange}
-                      // results={results}
-                      // value={value}
-                      />
+                      <MenuItem>
+                        <SearchWrapper fluid />
+                      </MenuItem>
+
                       <MenuItem>
                         <Button primary fluid as={Link} to='/profile'>
                           Profile

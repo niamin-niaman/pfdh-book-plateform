@@ -1,9 +1,11 @@
 import React, { useReducer, useState } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
-import { pocFb, setUser } from "../../redux/userSlice";
+import { setUser } from "../../redux/userSlice";
 
 import { BrowserRouter as Router, useHistory, Link } from "react-router-dom";
+
+import firebase from "../../firebase";
 
 import {
   Button,
@@ -14,20 +16,15 @@ import {
   Segment,
 } from "semantic-ui-react";
 
-import firebase from "../../firebase";
-
 const FormLogin = () => {
+  // ANCHOR ETC
   let history = useHistory();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
-  const handleBtnClick = () => {
-    // console.log(user);
-    // history.push("/");
-  };
-
+  // SECTION FORM HANDLER
   const [formInput, setFormInput] = useReducer(
     (state, newState) => ({
       ...state,
@@ -50,12 +47,8 @@ const FormLogin = () => {
       .then((userCredential) => {
         // Signed in
         var user = userCredential.user;
-        console.log(user.toJSON());
-        dispatch(
-          setUser({
-            ...user.toJSON(),
-          })
-        );
+        // console.log(user.toJSON());
+        dispatch(setUser());
         // ...
       })
       .catch((error) => {
@@ -67,6 +60,7 @@ const FormLogin = () => {
         // ..
       });
   };
+  // !SECTION
 
   // if already login
   if (Object.keys(user).length) {
@@ -105,13 +99,7 @@ const FormLogin = () => {
               onChange={(e) => handleInputChange(e)}
             />
 
-            <Button
-              loading={isLoading}
-              onClick={handleBtnClick}
-              color='teal'
-              fluid
-              size='large'
-            >
+            <Button loading={isLoading} color='teal' fluid size='large'>
               Login
             </Button>
           </Segment>

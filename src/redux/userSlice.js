@@ -7,26 +7,27 @@ const userSlice = createSlice({
   initialState: {},
   reducers: {
     setUser: (state, action) => {
-      const user = action.payload;
+      // const user = action.payload;
+      const user = firebase.auth().currentUser.toJSON();
+      // console.log(user);
       return { ...user };
     },
-    resetUser: (state, action)=>{
-      return {}
+    resetUser: (state, action) => {
+      return {};
     },
     /* note here add reducer return canbe return state */
-    pocFb: (state, action) => {
+    pocUser: (state, action) => {
       const data = action.payload;
+      console.log("poc");
       console.log(data);
-      const db = firebase.firestore();
-      const docRef = db.collection("users").doc(data.email);
-      docRef.set({
-        email: data.email,
-      });
+
+      const user = firebase.auth().currentUser.toJSON();
+      console.log(user);
     },
   },
 });
 
 // export function
-export const { setUser, pocFb , resetUser} = userSlice.actions;
+export const { pocUser, setUser, resetUser } = userSlice.actions;
 // export reducer
 export default userSlice.reducer;
