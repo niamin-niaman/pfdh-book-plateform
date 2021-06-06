@@ -1,6 +1,6 @@
 
 body {
-    background: #C3A6A1;
+    background: #e0c1bc;
 }
 
 .ui.segment {
@@ -48,4 +48,13 @@ body {
 .ui.comments {
     max-width: 100%;
     padding: 0em 1em;
+}
+
+@media only screen and (min-width: 1200px){
+    .ui.container {
+        width: 100%;
+    }
+    .ui.grid.container {
+        width: 100%;
+    }
 }

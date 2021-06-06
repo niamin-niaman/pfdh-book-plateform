@@ -22,6 +22,7 @@ import {
 import styled from "styled-components";
 
 import { Grid, Button, Search } from "semantic-ui-react";
+
 function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
@@ -30,9 +31,7 @@ function App() {
     firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
         // User is signed in.
-        dispatch(
-          setUser()
-        );
+        dispatch(setUser());
       } else {
         // No user is signed in.
       }

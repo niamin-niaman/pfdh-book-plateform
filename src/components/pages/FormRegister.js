@@ -69,7 +69,6 @@ const FormLogin = () => {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
-        
         var user = userCredential.user;
 
         // NOTE Create user DOC into firestore
@@ -77,15 +76,21 @@ const FormLogin = () => {
         const db = firebase.firestore();
         db.collection("users")
           .doc(user.toJSON().uid)
-          .set({ ...user.toJSON(), displayName: name });
+          .set({
+            ...user.toJSON(),
+            displayName: name,
+            photoURL:
+              "https://react.semantic-ui.com/images/wireframe/square-image.png",
+          });
 
         // Update display name
         user.updateProfile({
           displayName: name,
+          photoURL:
+            "https://react.semantic-ui.com/images/wireframe/square-image.png",
         });
 
         // NOTE in useEffect on APP component always check is login ?
-
       })
       .catch((error) => {
         console.log(error);
@@ -103,7 +108,6 @@ const FormLogin = () => {
     // console.log(user);
     history.push("/");
   }
-
 
   return (
     <Grid textAlign='center' style={{ height: "100vh" }} verticalAlign='middle'>
