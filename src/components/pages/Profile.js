@@ -95,14 +95,14 @@ const Profile = () => {
       const storage = firebase.storage();
       const uploadTask = storage
         .ref()
-        .child("profileImage/1.png")
+        .child(`profileImage/${user.uid}.png`)
         .put(croppedImage);
 
       uploadTask.on("state_changed", console.log, console.error, () => {
         storage
           .ref("profileImage")
           // .child(file.name)
-          .child("1.png")
+          .child(`${user.uid}.png`)
           .getDownloadURL()
           .then((url) => {
             console.log(url);
@@ -165,12 +165,21 @@ const Profile = () => {
       return;
     }
 
-    const user = firebase.auth().currentUser;
-    user
-      .updateProfile({
+    // const user = firebase.auth().currentUser;
+    firebase
+      .auth()
+      .currentUser.updateProfile({
         displayName: formInput.name,
       })
       .then(() => {
+        const db = firebase.firestore();
+        db.collection("users")
+          .doc(user.uid)
+          .set({
+            ...user,
+            displayName: formInput.name,
+          });
+
         setLoading(false);
         dispatch(setUser());
       });

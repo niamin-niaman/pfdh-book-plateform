@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import styled from "styled-components";
+
+import firebase from "../firebase";
 
 import {
   Grid,
@@ -23,7 +25,80 @@ const MetaData = styled.div`
   font-size: 0.875em;
 `;
 
-const Post = () => {
+const Post = ({ book }) => {
+  const [bookUser, setBookUser] = useState({});
+  /**
+   * name : ,
+   * photoUrl : ,
+   */
+  const [comments, setComments] = useState([
+    /**
+     * userName : ,
+     * userPhotoUrl : ,
+     * timeStamp: ,
+     * content : ,
+     */
+  ]);
+
+  useEffect(() => {
+    fetchComments();
+  }, []);
+
+  const fetchComments = async () => {
+    console.log("book in Post");
+    console.log(book);
+    const db = firebase.firestore();
+    const booksRef = db.collection("books").doc(book.key);
+
+    if (book.userRef) {
+      book.userRef.get().then((res) => {
+        const user = res.data();
+        console.log("user in book");
+        console.log(user);
+        setBookUser({
+          name: user.displayName,
+          photoURL: user.photoURL,
+        });
+        console.log(bookUser);
+      });
+    }
+    // get data in book ref
+    // const doc = await booksRef.get();
+    // console.log(doc.data());
+
+    // get comments
+    // https://medium.com/firebase-tips-tricks/how-to-list-all-subcollections-of-a-cloud-firestore-document-17f2bb80a166
+    // https://stackoverflow.com/a/47673346/14697633
+    booksRef
+      .collection("comments")
+      .orderBy("timeStamp")
+      .get()
+      .then((commentsCol) => {
+        console.log("comments in post");
+        commentsCol.forEach((res) => {
+          console.log(res.id, " => ", res.data());
+          let comment = {};
+          const data = res.data();
+          if (data.userId) {
+            data.userId.get().then((res) => {
+              console.log("userId in comment");
+              const user = res.data();
+              console.log(user);
+              comment["key"] = res.id;
+              comment["userName"] = user.displayName;
+              comment["userPhotoUrl"] = user.photoURL;
+              comment["timeStamp"] = data.timeStamp.toDate().toDateString();
+              // console.log(data.timeStamp.toDate().toDateString());
+              comment["content"] = data.content;
+              console.log("comment");
+              console.log(comment);
+              setComments([...comments, comment]);
+              // console.log(comments);
+            });
+          }
+        });
+      });
+  };
   return (
     <>
       <Wrapper>
@@ -32,32 +107,29 @@ const Post = () => {
             <Grid style={{ padding: "0em 1em" }}>
               <Grid.Column width={4}>
                 <Image
-                  src='https://react.semantic-ui.com/images/avatar/small/matt.jpg'
+                  // src='https://react.semantic-ui.com/images/avatar/small/matt.jpg'
+                  src={bookUser.photoURL}
                   size='small'
                   avatar
                 />
               </Grid.Column>
               <Grid.Column width={12}>
-                <h3>UserItem</h3>
-                <MetaData> Yesterday at 12:30AM </MetaData>
+                <h3>{bookUser.name}</h3>
+                <MetaData> {book.timeStamp.toDate().toDateString()} </MetaData>
               </Grid.Column>
             </Grid>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={6}>
               <Image
-                src='https://react.semantic-ui.com/images/wireframe/image.png'
+                // src='https://react.semantic-ui.com/images/wireframe/image.png'
+                src={book.photoUrl}
                 size='medium'
               />
             </Grid.Column>
             <Grid.Column width={10}>
-              <h3> ชื่อหนังสือ</h3>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Adipisci
-              nulla explicabo sequi odio, tempore enim vel deleniti ratione a
-              fugiat iure doloremque velit repudiandae eum omnis. Dolor error
-              alias eveniet tempore, ducimus architecto sequi aspernatur neque
-              accusantium vel, facilis dolores ad, cumque quia dignissimos quis
-              possimus repellendus! Exercitationem, doloribus ut.
+              <h3> {book.name}</h3>
+              {book.contents}
             </Grid.Column>
           </Grid.Row>
         </Grid>
@@ -66,6 +138,24 @@ const Post = () => {
             Comments
           </Header>
 
+          {comments &&
+            comments.map((comment) => {
+              return (
+                <Comment>
+                  <Comment.Avatar src={comment.userPhotoUrl} />
+                  <Comment.Content>
+                    <Comment.Author as='a'>{comment.userName}</Comment.Author>
+                    <Comment.Metadata>
+                      <div>{comment.timeStamp}</div>
+                    </Comment.Metadata>
+                    <Comment.Text>{comment.content}</Comment.Text>
+                    <Comment.Actions>
+                      <Comment.Action>Reply</Comment.Action>
+                    </Comment.Actions>
+                  </Comment.Content>
+                </Comment>
+              );
+            })}
           <Comment>
             <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' />
             <Comment.Content>
@@ -96,21 +186,6 @@ const Post = () => {
                 <Comment.Action>Reply</Comment.Action>
               </Comment.Actions>
             </Comment.Content>
-            <Comment.Group>
-              <Comment>
-                <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/jenny.jpg' />
-                <Comment.Content>
-                  <Comment.Author as='a'>Jenny Hess</Comment.Author>
-                  <Comment.Metadata>
-                    <div>Just now</div>
-                  </Comment.Metadata>
-                  <Comment.Text>Elliot you are always so right :)</Comment.Text>
-                  <Comment.Actions>
-                    <Comment.Action>Reply</Comment.Action>
-                  </Comment.Actions>
-                </Comment.Content>
-              </Comment>
-            </Comment.Group>
           </Comment>
 
           <Comment>
