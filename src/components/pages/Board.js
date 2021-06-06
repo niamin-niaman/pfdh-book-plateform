@@ -10,7 +10,9 @@ const Board = () => {
 
   const fetchBooks = async () => {
     const db = firebase.firestore();
-    const booksRef = db.collection("books").orderBy("timeStamp");
+    const booksRef = db
+      .collection("books")
+      .orderBy("timeStamp");
     const booksData = await booksRef.get();
     console.log("Book in board");
     const booksTmp = [];
@@ -18,6 +20,7 @@ const Board = () => {
     booksData.docs.forEach((doc) => {
       console.log(doc.id, "=>", doc.data());
       booksTmp.push({ key: doc.id, ...doc.data() });
+      // https://stackoverflow.com/a/61615437/14697633
       // setBooks([...books, { key: doc.id, ...doc.data() }]);
       // https://www.pluralsight.com/guides/consume-data-from-firebase-firestore-in-a-react-app
       // console.log(doc.id);

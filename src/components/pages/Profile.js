@@ -98,6 +98,7 @@ const Profile = () => {
         .child(`profileImage/${user.uid}.png`)
         .put(croppedImage);
 
+      // https://dev.to/itnext/how-to-do-image-upload-with-firebase-in-react-cpj
       uploadTask.on("state_changed", console.log, console.error, () => {
         storage
           .ref("profileImage")

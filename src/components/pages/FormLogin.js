@@ -65,7 +65,7 @@ const FormLogin = () => {
   // if already login
   if (Object.keys(user).length) {
     console.log(user);
-    history.push("/");
+    history.push("/board");
   }
 
   return (

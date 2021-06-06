@@ -14,6 +14,7 @@ import {
   Profile,
   FormPost,
   Board,
+  MyBoard,
   Admin,
   FormLogin,
   FormRegister,
@@ -99,37 +100,42 @@ function App() {
                       <MenuItem>
                         <SearchWrapper fluid />
                       </MenuItem>
-
-                      <MenuItem>
-                        <Button primary fluid as={Link} to='/profile'>
-                          Profile
-                        </Button>
-                      </MenuItem>
                       <MenuItem>
                         <Button primary fluid as={Link} to='/board'>
                           Board
                         </Button>
                       </MenuItem>
-                      <MenuItem>
-                        <Button primary fluid as={Link} to='/my-board'>
-                          My book
-                        </Button>
-                      </MenuItem>
-                      <MenuItem>
-                        <Button primary fluid as={Link} to='/form-post'>
-                          Post my book
-                        </Button>
-                      </MenuItem>
-                      <MenuItem>
-                        <Button primary fluid as={Link} to='/chat'>
-                          Chat
-                        </Button>
-                      </MenuItem>
-                      <MenuItem>
-                        <Button color='blue' fluid as={Link} to='/admin'>
-                          Admin
-                        </Button>
-                      </MenuItem>
+                      {Object.keys(user).length ? (
+                        <>
+                          <MenuItem>
+                            <Button primary fluid as={Link} to='/profile'>
+                              Profile
+                            </Button>
+                          </MenuItem>
+                          <MenuItem>
+                            <Button primary fluid as={Link} to='/my-board'>
+                              My book
+                            </Button>
+                          </MenuItem>
+                          <MenuItem>
+                            <Button primary fluid as={Link} to='/form-post'>
+                              Post my book
+                            </Button>
+                          </MenuItem>
+                          <MenuItem>
+                            <Button primary fluid as={Link} to='/chat'>
+                              Chat
+                            </Button>
+                          </MenuItem>
+                          <MenuItem>
+                            <Button color='blue' fluid as={Link} to='/admin'>
+                              Admin
+                            </Button>
+                          </MenuItem>
+                        </>
+                      ) : (
+                        ""
+                      )}
                       <MenuItem>
                         {Object.keys(user).length ? (
                           <Button color='red' fluid onClick={handleLogoutClick}>
@@ -150,7 +156,7 @@ function App() {
                         <Board />
                       </Route>
                       <Route path='/my-board'>
-                        <Board />
+                        <MyBoard />
                       </Route>
                       <Route path='/form-post'>
                         <FormPost />
