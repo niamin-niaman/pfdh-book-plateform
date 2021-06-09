@@ -76,7 +76,10 @@ const Post = ({ book }) => {
 
     console.log("comments in post");
     const commentsTmp = [];
-    commentsCol.forEach(async (res) => {
+
+    // commentsCol.forEach(async (res) => {
+    for (const res of commentsCol.docs) {
+      // https://dev.to/gautemeekolsen/til-firestore-get-collection-with-async-await-a5l
       console.log(res.id, " => ", res.data());
       let comment = {};
       const data = res.data();
@@ -85,7 +88,7 @@ const Post = ({ book }) => {
         // console.log("userId in comment");
         const user = commentsUserRef.data();
         // console.log(user);
-        comment["key"] = commentsUserRef.id;
+        comment["key"] = res.id;
         comment["userName"] = user.displayName;
         comment["userPhotoUrl"] = user.photoURL;
         comment["timeStamp"] = data.timeStamp.toDate().toDateString();
@@ -96,11 +99,11 @@ const Post = ({ book }) => {
         // console.log(comments);
       }
       commentsTmp.push(comment);
-      // console.log(comments);
       setComments([...commentsTmp]);
-    });
-    console.log("commentsTmp");
-    console.log(commentsTmp);
+      // });
+    }
+    // console.log("commentsTmp");
+    // console.log(commentsTmp);
     // console.log(commentsTmp);
   };
 
@@ -110,7 +113,7 @@ const Post = ({ book }) => {
 
   const handleFormSubmit = async () => {
     if (!comment) {
-      console.log('comment is empty');
+      console.log("comment is empty");
       return;
     }
     console.log(comment);
@@ -123,9 +126,41 @@ const Post = ({ book }) => {
       userId: db.doc(`users/${firebase.auth().currentUser.uid}`),
     });
     console.log("comment !");
-    console.log(commentRef);
-    fetchComments();
+    console.log(await commentRef.get());
+    const commentData = (await commentRef.get()).data();
+    console.log(commentData);
+    let commentTmp = {};
+    if (commentData.userId) {
+      const commentsUserRef = await commentData.userId.get();
+      // console.log("userId in comment");
+      const user = commentsUserRef.data();
+      // console.log(user);
+      commentTmp["key"] = commentsUserRef.id;
+      commentTmp["userName"] = user.displayName;
+      commentTmp["userPhotoUrl"] = user.photoURL;
+      commentTmp["timeStamp"] = commentData.timeStamp.toDate().toDateString();
+      // console.log(commentData.timeStamp.toDate().toDateString());
+      commentTmp["content"] = commentData.content;
+      console.log("commentTmp");
+      console.log(commentTmp);
+      // console.log(comments);
+    }
+    setComments([...comments, commentTmp]);
+    // fetchComments();
     setComment("");
+  };
+
+  const handleCommentDelete = (key) => {
+    console.log(key);
+    const db = firebase.firestore();
+    const commentRef = db
+      .collection("books")
+      .doc(book.key)
+      .collection("comments")
+      .doc(key);
+    commentRef.delete().then(() => {
+      setComments(comments.filter((comment) => comment.key !== key));
+    });
   };
 
   return (
@@ -178,9 +213,20 @@ const Post = ({ book }) => {
                       <div>{comment.timeStamp}</div>
                     </Comment.Metadata>
                     <Comment.Text>{comment.content}</Comment.Text>
-                    <Comment.Actions>
-                      <Comment.Action>Reply</Comment.Action>
-                    </Comment.Actions>
+                    {!Object.keys(user).length ? (
+                      ""
+                    ) : (
+                      <Comment.Actions>
+                        {/* <Comment.Action>Edit</Comment.Action> */}
+                        <Comment.Action
+                          onClick={() => {
+                            handleCommentDelete(comment.key);
+                          }}
+                        >
+                          Delete
+                        </Comment.Action>
+                      </Comment.Actions>
+                    )}
                   </Comment.Content>
                 </Comment>
               );

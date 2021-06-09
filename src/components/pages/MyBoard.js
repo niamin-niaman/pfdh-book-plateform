@@ -17,11 +17,11 @@ const Board = () => {
     try {
       booksRef = db
         .collection("books")
-        .where(
-          "userRef",
-          "==",
-          db.doc(`users/${firebase.auth().currentUser.uid}`)
-        )
+        // .where(
+        //   "userRef",
+        //   "==",
+        //   db.doc(`users/${firebase.auth().currentUser.uid}`)
+        // )
         .orderBy("timeStamp");
 
       const booksData = await booksRef.get();
