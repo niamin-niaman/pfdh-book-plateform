@@ -10,9 +10,7 @@ const Board = () => {
 
   const fetchBooks = async () => {
     const db = firebase.firestore();
-    const booksRef = db
-      .collection("books")
-      .orderBy("timeStamp");
+    const booksRef = db.collection("books").orderBy("timeStamp", "desc");
     const booksData = await booksRef.get();
     console.log("Book in board");
     const booksTmp = [];

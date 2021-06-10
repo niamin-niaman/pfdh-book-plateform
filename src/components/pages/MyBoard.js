@@ -14,6 +14,9 @@ const Board = () => {
   const fetchBooks = async () => {
     const db = firebase.firestore();
     let booksRef;
+
+    // const userRef = db.collection("users").doc(firebase.auth().currentUser.uid);
+
     try {
       booksRef = db
         .collection("books")
@@ -38,7 +41,8 @@ const Board = () => {
       });
       setBooks([...books, ...booksTmp]);
     } catch (error) {
-      history.push("/");
+      console.log(error);
+      // history.push("/");
     }
   };
 
