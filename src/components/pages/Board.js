@@ -30,12 +30,29 @@ const Board = () => {
     fetchBooks();
   }, []);
 
+  const onDeleteBook = (key) => {
+    console.log(key);
+
+    setBooks(
+      books.filter((book) => {
+        console.log(book);
+        return book.key !== key;
+      })
+    );
+
+    const db = firebase.firestore();
+    const bookRef = db.collection("books").doc(key);
+    bookRef.delete().then(() => {});
+  };
+
   return (
     <>
       {books &&
         books.map((book) => {
           // console.log(book);
-          return <Post key={book.key} book={book} />;
+          return (
+            <Post key={book.key} book={book} onDeleteBook={onDeleteBook} />
+          );
         })}
       {/* <Post /> */}
       {/* <Post /> */}

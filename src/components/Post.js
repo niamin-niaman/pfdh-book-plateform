@@ -15,6 +15,7 @@ import {
   Button,
   Segment,
 } from "semantic-ui-react";
+import { Link, Redirect, useHistory } from "react-router-dom";
 
 const Wrapper = styled(Segment)`
   border: 1px solid black;
@@ -27,7 +28,8 @@ const MetaData = styled.div`
   font-size: 0.875em;
 `;
 
-const Post = ({ book }) => {
+const Post = ({ book, onDeleteBook }) => {
+  let history = useHistory();
   const user = useSelector((state) => state.user);
   // get data from book user firestore
   const [bookUser, setBookUser] = useState({});
@@ -61,8 +63,9 @@ const Post = ({ book }) => {
       setBookUser({
         name: user.displayName,
         photoURL: user.photoURL,
+        userId: bookUserRef.id,
       });
-      // console.log(bookUser);
+      console.log(bookUser);
     }
 
     // get comments
@@ -94,6 +97,7 @@ const Post = ({ book }) => {
         comment["timeStamp"] = data.timeStamp.toDate().toDateString();
         // console.log(data.timeStamp.toDate().toDateString());
         comment["content"] = data.content;
+        comment["userId"] = commentsUserRef.id;
         console.log("comment");
         console.log(comment);
         // console.log(comments);
@@ -135,12 +139,13 @@ const Post = ({ book }) => {
       // console.log("userId in comment");
       const user = commentsUserRef.data();
       // console.log(user);
-      commentTmp["key"] = commentsUserRef.id;
+      commentTmp["key"] = (await commentRef.get()).id;
       commentTmp["userName"] = user.displayName;
       commentTmp["userPhotoUrl"] = user.photoURL;
       commentTmp["timeStamp"] = commentData.timeStamp.toDate().toDateString();
       // console.log(commentData.timeStamp.toDate().toDateString());
       commentTmp["content"] = commentData.content;
+      commentTmp["userId"] = firebase.auth().currentUser.uid;
       console.log("commentTmp");
       console.log(commentTmp);
       // console.log(comments);
@@ -163,13 +168,75 @@ const Post = ({ book }) => {
     });
   };
 
+  const handleUserClick = (userId) => {
+    if (!firebase.auth().currentUser) return;
+    console.log("userId :");
+    console.log(userId);
+    const currUserId = firebase.auth().currentUser.uid;
+    console.log("currUserId");
+    console.log(currUserId);
+    if (userId === currUserId) return;
+    console.log("userId slice");
+    const sliceUserId = userId.slice(0, userId.length / 2);
+    console.log(sliceUserId);
+    console.log("currUserId slice");
+    const slicecurrUserId = currUserId.slice(0, currUserId.length / 2);
+    console.log(slicecurrUserId);
+    console.log("compare");
+    console.log(sliceUserId.localeCompare(slicecurrUserId));
+
+    let chatId;
+    switch (sliceUserId.localeCompare(slicecurrUserId)) {
+      case 0:
+        break;
+      case -1:
+        chatId = slicecurrUserId + "" + sliceUserId;
+        break;
+      case 1:
+        chatId = sliceUserId + "" + slicecurrUserId;
+        break;
+      default:
+        break;
+    }
+
+    console.log(chatId);
+
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(userId)
+      .collection("chats")
+      .doc(currUserId)
+      .set({
+        chatsId: chatId,
+        timeStamp: firebase.firestore.Timestamp.now(),
+        userId: currUserId,
+      });
+
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(currUserId)
+      .collection("chats")
+      .doc(userId)
+      .set({
+        chatsId: chatId,
+        timeStamp: firebase.firestore.Timestamp.now(),
+        userId: userId,
+      });
+
+    history.push("/chat/" + chatId);
+  };
+
   return (
     <>
       <Wrapper>
         <Grid container>
           <Grid.Row>
-            <Grid style={{ padding: "0em 1em" }}>
-              <Grid.Column width={4}>
+            <Grid
+              style={{ padding: "0em 1em", maxHeigh: "85px", width: "100%" }}
+            >
+              <Grid.Column width={2}>
                 <Image
                   // src='https://react.semantic-ui.com/images/avatar/small/matt.jpg'
                   src={bookUser.photoURL}
@@ -177,9 +244,29 @@ const Post = ({ book }) => {
                   avatar
                 />
               </Grid.Column>
-              <Grid.Column width={12}>
-                <h3>{bookUser.name}</h3>
+              <Grid.Column width={13}>
+                <h3
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    handleUserClick(bookUser.userId);
+                  }}
+                >
+                  {bookUser.name}
+                </h3>
                 <MetaData> {book.timeStamp.toDate().toDateString()} </MetaData>
+              </Grid.Column>
+              <Grid.Column width={1}>
+                {Object.keys(user).length && bookUser.userId === user.uid ? (
+                  <Button
+                    circular
+                    icon='trash alternate'
+                    onClick={() => {
+                      onDeleteBook(book.key);
+                    }}
+                  />
+                ) : (
+                  ""
+                )}
               </Grid.Column>
             </Grid>
           </Grid.Row>
@@ -205,7 +292,7 @@ const Post = ({ book }) => {
           {comments &&
             comments.map((comment) => {
               return (
-                <Comment>
+                <Comment key={comment.key}>
                   <Comment.Avatar src={comment.userPhotoUrl} />
                   <Comment.Content>
                     <Comment.Author as='a'>{comment.userName}</Comment.Author>
@@ -213,9 +300,7 @@ const Post = ({ book }) => {
                       <div>{comment.timeStamp}</div>
                     </Comment.Metadata>
                     <Comment.Text>{comment.content}</Comment.Text>
-                    {!Object.keys(user).length ? (
-                      ""
-                    ) : (
+                    {Object.keys(user).length && comment.userId === user.uid ? (
                       <Comment.Actions>
                         {/* <Comment.Action>Edit</Comment.Action> */}
                         <Comment.Action
@@ -226,6 +311,8 @@ const Post = ({ book }) => {
                           Delete
                         </Comment.Action>
                       </Comment.Actions>
+                    ) : (
+                      ""
                     )}
                   </Comment.Content>
                 </Comment>

@@ -18,6 +18,7 @@ import {
   Admin,
   FormLogin,
   FormRegister,
+  ChatList,
 } from "./components/pages";
 
 import styled from "styled-components";
@@ -112,11 +113,11 @@ function App() {
                               Profile
                             </Button>
                           </MenuItem>
-                          <MenuItem>
+                          {/* <MenuItem>
                             <Button primary fluid as={Link} to='/my-board'>
                               My book
                             </Button>
-                          </MenuItem>
+                          </MenuItem> */}
                           <MenuItem>
                             <Button primary fluid as={Link} to='/form-post'>
                               Post my book
@@ -127,11 +128,11 @@ function App() {
                               Chat
                             </Button>
                           </MenuItem>
-                          <MenuItem>
+                          {/* <MenuItem>
                             <Button color='blue' fluid as={Link} to='/admin'>
                               Admin
                             </Button>
-                          </MenuItem>
+                          </MenuItem> */}
                         </>
                       ) : (
                         ""
@@ -161,8 +162,12 @@ function App() {
                       <Route path='/form-post'>
                         <FormPost />
                       </Route>
-                      <Route path='/chat'>
+                      <Route path='/chat/:chatId'>
                         <Chat />
+                      </Route>
+                      <Route exact path='/chat'>
+                        {/* <Chat /> */}
+                        <ChatList />
                       </Route>
                       <Route path='/profile'>
                         <Profile />

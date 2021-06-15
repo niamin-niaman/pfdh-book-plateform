@@ -29,6 +29,7 @@
         "chatIdDoc" : {
             "from" : "userId",
             "message" : "bla bla"
+            "timeStamp" : time
         }
     }
 }
