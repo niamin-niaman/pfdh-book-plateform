@@ -65,7 +65,7 @@ const Post = ({ book, onDeleteBook }) => {
         photoURL: user.photoURL,
         userId: bookUserRef.id,
       });
-      console.log(bookUser);
+      // console.log(bookUser);
     }
 
     // get comments
@@ -77,13 +77,13 @@ const Post = ({ book, onDeleteBook }) => {
       .orderBy("timeStamp")
       .get();
 
-    console.log("comments in post");
+    // console.log("comments in post");
     const commentsTmp = [];
 
     // commentsCol.forEach(async (res) => {
     for (const res of commentsCol.docs) {
       // https://dev.to/gautemeekolsen/til-firestore-get-collection-with-async-await-a5l
-      console.log(res.id, " => ", res.data());
+      // console.log(res.id, " => ", res.data());
       let comment = {};
       const data = res.data();
       if (data.userId) {
@@ -98,8 +98,8 @@ const Post = ({ book, onDeleteBook }) => {
         // console.log(data.timeStamp.toDate().toDateString());
         comment["content"] = data.content;
         comment["userId"] = commentsUserRef.id;
-        console.log("comment");
-        console.log(comment);
+        // console.log("comment");
+        // console.log(comment);
         // console.log(comments);
       }
       commentsTmp.push(comment);
@@ -295,7 +295,14 @@ const Post = ({ book, onDeleteBook }) => {
                 <Comment key={comment.key}>
                   <Comment.Avatar src={comment.userPhotoUrl} />
                   <Comment.Content>
-                    <Comment.Author as='a'>{comment.userName}</Comment.Author>
+                    <Comment.Author
+                      as='a'
+                      onClick={() => {
+                        handleUserClick(comment.userId);
+                      }}
+                    >
+                      {comment.userName}
+                    </Comment.Author>
                     <Comment.Metadata>
                       <div>{comment.timeStamp}</div>
                     </Comment.Metadata>

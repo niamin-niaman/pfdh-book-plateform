@@ -53,5 +53,14 @@
 
 ### Reading chat
 
+## Testing user
 
+### T1
 
+- username : test@test.test
+- password : test@test.test
+
+### T2
+
+- username : test2@test.test
+- password : test2@test.test

@@ -22,7 +22,7 @@ const Wrapper = styled(Segment)`
 
 const ChatList = () => {
   const history = useHistory();
-  let currUserId
+  let currUserId;
   try {
     currUserId = firebase.auth().currentUser.uid;
   } catch (error) {
@@ -39,7 +39,7 @@ const ChatList = () => {
   const query = messagesRef.orderBy("timeStamp").limitToLast(25);
 
   const [users] = useCollectionData(query, { idField: "id" });
-  //   console.log(users);
+  // console.log(users);
 
   return (
     <>
@@ -57,9 +57,9 @@ const MetaData = styled.div`
 `;
 
 const User = ({ user }) => {
-  console.log("user : ", user);
+  // console.log("user : ", user);
   const chatsId = user.chatsId;
-  console.log("chatsId : ", chatsId);
+  // console.log("chatsId : ", chatsId);
   // user data
   const [userData, userLoading, userError] = useDocumentData(
     firebase.firestore().doc(`users/${user.userId}`)
@@ -88,33 +88,39 @@ const User = ({ user }) => {
       .limitToLast(1),
     { idField: "id" }
   );
-  console.log(messages);
+  // console.log("message :", messages);
+
+  if (typeof messages === "undefined" || messages.length === 0) {
+    return <></>;
+  }
 
   return (
     <>
-      <Grid
-        as={Link}
-        to={`chat/${chatsId}`}
-        style={{
-          padding: "0em 1em",
-          maxHeigh: "85px",
-          width: "100%",
-          cursor: "pointer",
-        }}
-      >
-        <Grid.Column width={2}>
-          <Image
-            // src='https://react.semantic-ui.com/images/avatar/small/matt.jpg'
-            src={userData && userData.photoURL}
-            size='small'
-            avatar
-          />
-        </Grid.Column>
-        <Grid.Column width={13}>
-          <h3>{userData && userData.displayName}</h3>
-          <MetaData> {messages && messages[0].content} </MetaData>
-        </Grid.Column>
-      </Grid>
+      {messages && (
+        <Grid
+          as={Link}
+          to={`chat/${chatsId}`}
+          style={{
+            padding: "0em 1em",
+            maxHeigh: "85px",
+            width: "100%",
+            cursor: "pointer",
+          }}
+        >
+          <Grid.Column width={2}>
+            <Image
+              // src='https://react.semantic-ui.com/images/avatar/small/matt.jpg'
+              src={userData && userData.photoURL}
+              size='small'
+              avatar
+            />
+          </Grid.Column>
+          <Grid.Column width={13}>
+            <h3>{userData && userData.displayName}</h3>
+            {<MetaData> {messages[0].content} </MetaData>}
+          </Grid.Column>
+        </Grid>
+      )}
     </>
   );
 };
